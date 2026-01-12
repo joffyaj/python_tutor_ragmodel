@@ -107,6 +107,26 @@ embeddings = load_embeddings()
 
 @st.cache_resource
 def load_vectorstore():
+    if not os.path.exists("vectorstore"):
+        st.info("🔄 Building knowledge base for the first time...")
+
+        from langchain_community.document_loaders import PyPDFLoader
+        from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+        loader = PyPDFLoader("data/data.pdf")
+        documents = loader.load()
+
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=500,
+            chunk_overlap=50
+        )
+        chunks = splitter.split_documents(documents)
+
+        vectorstore = FAISS.from_documents(chunks, embeddings)
+        vectorstore.save_local("vectorstore")
+
+        return vectorstore
+
     return FAISS.load_local(
         "vectorstore",
         embeddings,
