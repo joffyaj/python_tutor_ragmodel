@@ -80,7 +80,7 @@ with st.sidebar:
 
     if st.button("🧹 Reset Conversation"):
         st.session_state.messages = []
-        st.experimental_rerun()
+        st.rerun()
 
     st.markdown(
         """
